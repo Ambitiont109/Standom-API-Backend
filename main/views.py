@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status, permissions
 from .serializers import LoginSerializer, RegisterSerializer, QuestionSerializer, UserSerializer, UserUpdateSerializer
 from .models import User, Question, Answer
+from .decorators import get_gps_location
 
 
 def format_errors(errors, res_status = False):
@@ -59,6 +60,7 @@ def register(request):
 
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
+@get_gps_location
 def list_question(request):
     ret_val = {}
     if request.user.is_in_location():
@@ -103,12 +105,14 @@ def check_answer(request):
 
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
+@get_gps_location
 def list_user(request):
     """
     List users order by score
     """
     serializer = UserSerializer(User.objects.filter(is_superuser=False).order_by('score').all(), many=True)
-    ret_val = serializer.data
+    ret_val = {}
+    ret_val['users'] = serializer.data
     ret_val['res'] = True
     return Response(ret_val, status=status.HTTP_200_OK)
 
