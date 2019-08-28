@@ -1,0 +1,213 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />
+        <style type="text/css">
+          #map{ width:600px; height: 500px; }
+        </style>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+{% if app_list %}
+    {% for app in app_list %}
+        <div class="app-{{ app.app_label }} module">
+        <table>
+        <caption>
+            <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a>
+        </caption>
+        {% for model in app.models %}
+            <tr class="model-{{ model.object_name|lower }}">
+            {% if model.admin_url %}
+                <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+            {% else %}
+                <th scope="row">{{ model.name }}</th>
+            {% endif %}
+
+            {% if model.add_url %}
+                <td><a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a></td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
+
+            {% if model.admin_url %}
+                <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>{% trans "You don't have permission to edit anything." %}</p>
+{% endif %}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related">
+    <div class="module" id="recent-actions-module">
+        <h2>{% trans 'Recent actions' %}</h2>
+        <h3>{% trans 'My actions' %}</h3>
+            {% load log %}
+            {% get_admin_log 10 as admin_log for_user user %}
+            {% if not admin_log %}
+            <p>{% trans 'None available' %}</p>
+            {% else %}
+            <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                {% if entry.is_deletion or not entry.get_admin_url %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br/>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{{ entry.content_type }}{% endfilter %}</span>
+                {% else %}
+                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+    </div>
+</div>
+<div id="set-location">
+    <h1> Set Location </h1>
+     <div id="map"></div>
+        
+        <!--our form-->
+        <h2>Chosen Location</h2>
+        <form method="post" action="main/user/set_location/">
+        	{% csrf_token  %}
+            <input type="text" name ="lat" id="lat" readonly="yes" required><br>
+            <input type="text" name = "lng" id="lng" readonly="yes" required>
+            <input type="submit" name="Set" value="Set Location">
+            <input type="button" value="Cancel" onclick="reset_btn_click()">
+        </form>
+        
+        <script type="text/javascript">
+        	//map.js
+ 
+//Set up some of our variables.
+var map; //Will contain map object.
+var marker = false; ////Has the user plotted their location marker? 
+        
+//Function called to initialize / create the map.
+//This is called when the page has loaded.
+var lat = {{target_lat}};
+var lng = {{target_lng}};
+function initMap() {
+ 
+    //The center location of our map.
+
+    if(lat == 0.0)
+    	lat = 52.357971
+    if(lng == 0.0)
+    	lng = -6.516758
+    var centerOfMap = new google.maps.LatLng(lat, lng);
+    // var centerOfMap = new google.maps.LatLng(52.357971, -6.516758);
+ 
+    //Map options.
+    var options = {
+      center: centerOfMap, //Set center.
+      zoom: 7 //The zoom value.
+    };
+ 
+    //Create the map object.
+    map = new google.maps.Map(document.getElementById('map'), options);
+ 
+    //Listen for any clicks on the map.
+    google.maps.event.addListener(map, 'click', function(event) {                
+        //Get the location that the user clicked.
+        var clickedLocation = event.latLng;
+        console.log(clickedLocation);
+        //If the marker hasn't been added.
+        if(marker === false){
+            //Create the marker.
+            marker = new google.maps.Marker({
+                position: clickedLocation,
+                map: map,
+                draggable: true //make it draggable
+            });
+            //Listen for drag events!
+            google.maps.event.addListener(marker, 'dragend', function(event){
+                markerLocation();
+            });
+        } else{
+            //Marker has already been added, so just change its location.
+            marker.setPosition(clickedLocation);
+        }
+        //Get the marker's location.
+        markerLocation();
+    });
+    var clickedLocation = new google.maps.LatLng(lat, lng);
+    //If the marker hasn't been added.
+    if(marker === false){
+        //Create the marker.
+        marker = new google.maps.Marker({
+            position: clickedLocation,
+            map: map,
+            draggable: true //make it draggable
+        });
+        //Listen for drag events!
+        google.maps.event.addListener(marker, 'dragend', function(event){
+            markerLocation();
+        });
+    } else{
+        //Marker has already been added, so just change its location.
+        marker.setPosition(clickedLocation);
+        
+    }
+    markerLocation();
+
+}
+function reset_btn_click(){
+
+    var clickedLocation = new google.maps.LatLng(lat, lng);
+    if(marker === false){
+        //Create the marker.
+        marker = new google.maps.Marker({
+            position: clickedLocation,
+            map: map,
+            draggable: true //make it draggable
+        });
+        //Listen for drag events!
+        google.maps.event.addListener(marker, 'dragend', function(event){
+            markerLocation();
+        });
+    } else{
+        //Marker has already been added, so just change its location.
+        marker.setPosition(clickedLocation);        
+    }
+    markerLocation();
+}
+//This function will get the marker's current location and then add the lat/long
+//values to our textfields so that we can save the location.
+function markerLocation(){
+    //Get location.
+    var currentLocation = marker.getPosition();
+    //Add lat and lng values to a field that we can save.
+    document.getElementById('lat').value = currentLocation.lat(); //latitude
+    document.getElementById('lng').value = currentLocation.lng(); //longitude
+}
+        
+        
+//Load the map when the page has finished loading.
+google.maps.event.addDomListener(window, 'load', initMap);
+        </script>
+</div>
+
+{% endblock %}
