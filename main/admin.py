@@ -40,7 +40,9 @@ class MyAdminSite(admin.AdminSite):
 
 
 my_admin_site = MyAdminSite(name="myadmin")
-
+my_admin_site.site_header = "Standom Administration"
+my_admin_site.site_title = "Standom Admin"
+my_admin_site.index_title = "Standom Administration"
 
 class AnswerInline(admin.TabularInline):
     model = Answer
