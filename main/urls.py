@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.urls import path
 from main import views
+from django.views.generic import RedirectView
+# from django.core.urlresolvers import reverse_lazy
 
 urlpatterns = [
     # Authentication
+    path('', RedirectView.as_view(url='admin', permanent=True)),
     path('login/', views.login),
     path('register/', views.register),
     path('list/question/', views.list_question),
