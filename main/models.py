@@ -45,8 +45,6 @@ class User(AbstractUser):
                 score = score + 5
         self.score = score / total_questions
 
-
-
     def is_in_location(self):   # check if current user is in 10km radius
         try:
             target_config = Config.objects.get_or_create(key="target_location")[0]
@@ -61,11 +59,23 @@ class User(AbstractUser):
         dist = calculateDistance(lat, lng, self.latitude, self.longitude)
         return dist < 10
 
+    def get_campaign_in_location(self):
+        # find the campaign that are available in your location, even there is many campaing, it returns only one.
+        campaigns = Campaign.objects.all()
+        for campaign in campaigns:
+            lat = campaign.latitude
+            lng = campaign.longitude
+            dist = calculateDistance(lat, lng, self.latitude, self.longitude)
+            if dist < 10:   # if the distance is in 10 km
+                return campaign
+        return None
+
 
 
 class Question(models.Model):
     question = models.CharField(max_length=250)
     answer = models.CharField(max_length=250)  # represent the correct answer of question
+    campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -101,3 +111,12 @@ class Config(models.Model):
     value = models.CharField(max_length=250)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class Campaign(models.Model):
+    name = models.CharField(max_length=250)
+    latitude = models.FloatField(blank=True, default=0)
+    longitude = models.FloatField(blank=True, default=0)
+
+    def __str__(self):
+        return self.name

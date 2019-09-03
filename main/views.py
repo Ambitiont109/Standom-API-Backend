@@ -63,8 +63,9 @@ def register(request):
 @get_gps_location
 def list_question(request):
     ret_val = {}
-    if request.user.is_in_location():
-        serializer = QuestionSerializer(Question.objects.all(), many=True)
+    campaign = request.user.get_campaign_in_location()
+    if campaign:
+        serializer = QuestionSerializer(campaign.question_set.all(), many=True)
         ret_val['questions'] = serializer.data
         ret_val['res'] = True
     else:

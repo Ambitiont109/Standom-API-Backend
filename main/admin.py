@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib import messages
-from .models import User, Question, Answer, Config
+from .models import User, Question, Answer, Campaign
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.admin.options import IS_POPUP_VAR
 from django.contrib.admin.utils import unquote
@@ -9,6 +9,7 @@ from django.contrib.auth.forms import (
     AdminPasswordChangeForm,
 )
 from django.core.exceptions import PermissionDenied
+from django.core import serializers
 from django.http import Http404, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
@@ -25,17 +26,10 @@ class MyAdminSite(admin.AdminSite):
     def index(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
-        try:
-            target_config = Config.objects.get_or_create(key="target_location")[0]
-            target_location = json.loads(target_config.value)
-            lat = target_location.get('lat', '0.0')
-            lng = target_location.get('lng', '0.0')
-        except Exception:
-            lat = '0.0'
-            lng = '0.0'
+        campaigns = Campaign.objects.all()
 
-        extra_context["target_lat"] = lat
-        extra_context["target_lng"] = lng
+        extra_context["campaigns"] = serializers.serialize('json',campaigns)
+
         return super().index(request, extra_context)
 
 
@@ -43,6 +37,7 @@ my_admin_site = MyAdminSite(name="myadmin")
 my_admin_site.site_header = "Standom Administration"
 my_admin_site.site_title = "Standom Admin"
 my_admin_site.index_title = "Standom Administration"
+
 
 class AnswerInline(admin.TabularInline):
     model = Answer
@@ -101,13 +96,13 @@ class UserMyAdmin(admin.ModelAdmin):
 
     def set_location(self, request):
         if request.method == 'POST':
-            target_config = Config.objects.get_or_create(key="target_location")[0]
-            lat = request.POST.get('lat', '0.0')
-            lng = request.POST.get('lng', '0.0')
-            target_config.value = "{\"lat\": %s ,\"lng\": %s}" % (lat, lng)
-            target_config.save()
+            # target_config = Config.objects.get_or_create(key="target_location")[0]
+            # lat = request.POST.get('lat', '0.0')
+            # lng = request.POST.get('lng', '0.0')
+            # target_config.value = "{\"lat\": %s ,\"lng\": %s}" % (lat, lng)
+            # target_config.save()
 
-            messages.add_message(request, messages.INFO, 'SetLocation successfully')
+            # messages.add_message(request, messages.INFO, 'SetLocation successfully')
             return HttpResponseRedirect(
                    '/admin/'
                 )
@@ -177,7 +172,22 @@ class UserMyAdmin(admin.ModelAdmin):
         )
 
 
+class QuestionInline(admin.TabularInline):
+    model = Question
+
+    def save_model(self, request, obj, form, change):
+        print("=== save answer inline " + str(obj.id))
+        super().save_model(request, obj, form, change)
+
+
+class CampaignAdmin(admin.ModelAdmin):
+    inlines = [
+        QuestionInline,
+    ]
+
+
 my_admin_site.register(User, UserMyAdmin)
 my_admin_site.register(Question)
+my_admin_site.register(Campaign, CampaignAdmin)
 # admin.site.register(Answer)
 # my_admin_site.unregister(Group)
