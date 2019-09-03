@@ -64,6 +64,10 @@ class UserMyAdmin(admin.ModelAdmin):
     change_password_form = AdminPasswordChangeForm
     current_obj = None
 
+    def get_queryset(self, request):
+        qs = super(UserMyAdmin, self).get_queryset(request)
+        return qs.filter(is_superuser=False)
+
     def save_model(self, request, obj, form, change):
         obj.username = obj.email
         super().save_model(request, obj, form, change)

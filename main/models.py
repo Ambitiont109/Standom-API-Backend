@@ -74,7 +74,7 @@ class User(AbstractUser):
 
 class Question(models.Model):
     question = models.CharField(max_length=250)
-    answer = models.CharField(max_length=250)  # represent the correct answer of question
+    # answer = models.CharField(max_length=250)  # represent the correct answer of question
     campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
