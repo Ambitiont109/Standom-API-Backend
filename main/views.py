@@ -33,9 +33,11 @@ def login(request):
             if not user.check_password(pwd):
                 return Response({'error': 'email or password is invalid', 'res': False}, status=status.HTTP_200_OK)
         else:
-            user = User.objects.get_or_create(email=email, username=email, latitude=lat, longitude = lng)
+            user = User.objects.get_or_create(email=email, username=email)
             user[0].save()
             user = user[0]
+        user.latitude = lat
+        user.longitude = lng
         token = Token.objects.get_or_create(user=user)
         serializer = UserSerializer(user)
         res_val = serializer.data
