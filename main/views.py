@@ -38,6 +38,7 @@ def login(request):
             user = user[0]
         user.latitude = lat
         user.longitude = lng
+        user.save()
         token = Token.objects.get_or_create(user=user)
         serializer = UserSerializer(user)
         res_val = serializer.data
