@@ -6,6 +6,8 @@ class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     auth_type = serializers.CharField()  # available value: basci, google, facebook
     password = serializers.CharField(required=False)
+    latitude = serializers.IntegerField(default=0.0)
+    longitude = serializers.IntegerField(default=0.0)
 
     def validate(self, data):
         """

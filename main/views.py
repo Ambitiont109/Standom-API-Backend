@@ -21,6 +21,8 @@ def login(request):
     if serializer.is_valid():
         email = serializer.validated_data['email']
         auth_type = serializer.validated_data['auth_type']
+        lat = serializer.validated_data['latitude']
+        lng = serializer.validated_data['longitude']
         user = None
         if auth_type == "basic":
             try:
@@ -31,7 +33,7 @@ def login(request):
             if not user.check_password(pwd):
                 return Response({'error': 'email or password is invalid', 'res': False}, status=status.HTTP_200_OK)
         else:
-            user = User.objects.get_or_create(email=email, username=email)
+            user = User.objects.get_or_create(email=email, username=email, latitude=lat, longitude = lng)
             user[0].save()
             user = user[0]
         token = Token.objects.get_or_create(user=user)
