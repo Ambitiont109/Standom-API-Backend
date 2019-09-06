@@ -43,6 +43,14 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'name', 'email', 'avatar', 'latitude', 'longitude', 'score')
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not data['avatar']:
+            data['avatar'] = ""
+        else:
+            data['avatar'] = data['avatar'][1:]
+        return data
+
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
