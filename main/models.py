@@ -67,6 +67,7 @@ class User(AbstractUser):
             lat = campaign.latitude
             lng = campaign.longitude
             dist = calculateDistance(lat, lng, self.latitude, self.longitude)
+            # print(dist)
             if dist < 10:   # if the distance is in 10 km
                 return campaign
         return None
