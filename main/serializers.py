@@ -6,8 +6,8 @@ class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     auth_type = serializers.CharField()  # available value: basci, google, facebook
     password = serializers.CharField(required=False)
-    latitude = serializers.IntegerField(default=0.0)
-    longitude = serializers.IntegerField(default=0.0)
+    latitude = serializers.FloatField(default=0.0)
+    longitude = serializers.FloatField(default=0.0)
 
     def validate(self, data):
         """
@@ -56,6 +56,15 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('name', 'avatar')
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not data['avatar']:
+            data['avatar'] = ""
+        else:
+            data['avatar'] = data['avatar'][1:]
+        return data
+
 
 
 class QuestionSerializer(serializers.ModelSerializer):

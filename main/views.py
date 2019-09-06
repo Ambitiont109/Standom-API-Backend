@@ -70,7 +70,7 @@ def list_question(request):
     ret_val = {}
     campaign = request.user.get_campaign_in_location()
     if campaign:
-        serializer = QuestionSerializer(campaign.question_set.all(), many=True)
+        serializer = QuestionSerializer(campaign.question_set.exclude(answers__user=request.user, answers__is_right=True), many=True)
         ret_val['questions'] = serializer.data
         ret_val['res'] = True
     else:
