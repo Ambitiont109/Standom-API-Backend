@@ -31,7 +31,7 @@ class User(AbstractUser):
     avatar = models.ImageField(blank=True, default='')
     latitude = models.FloatField(blank=True, default=0)
     longitude = models.FloatField(blank=True, default=0)
-    score = models.IntField(default=0)
+    score = models.IntegerField(default=0)
     questions = models.ManyToManyField('Question', through='Answer')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
