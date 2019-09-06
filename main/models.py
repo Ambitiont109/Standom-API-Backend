@@ -31,7 +31,7 @@ class User(AbstractUser):
     avatar = models.ImageField(blank=True, default='')
     latitude = models.FloatField(blank=True, default=0)
     longitude = models.FloatField(blank=True, default=0)
-    score = models.FloatField(default=0)
+    score = models.IntField(default=0)
     questions = models.ManyToManyField('Question', through='Answer')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -43,7 +43,8 @@ class User(AbstractUser):
         for answer in answers:
             if answer.is_right:
                 score = score + 5
-        self.score = score / total_questions
+        self.score = score
+        # self.score = score / total_questions
 
     def is_in_location(self):   # check if current user is in 10km radius
         try:
