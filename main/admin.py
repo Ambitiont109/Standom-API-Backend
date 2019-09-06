@@ -43,7 +43,7 @@ class AnswerInline(admin.TabularInline):
     model = Answer
 
     def save_model(self, request, obj, form, change):
-        print("=== save answer inline " + str(obj.id))
+        # print("=== save answer inline " + str(obj.id))
         super().save_model(request, obj, form, change)
 
 
@@ -75,7 +75,7 @@ class UserMyAdmin(admin.ModelAdmin):
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
-        print("=======Save realted")
+        # print("=======Save realted")
         if self.current_obj:
             self.current_obj.update_score()
             self.current_obj.save()
@@ -180,7 +180,7 @@ class QuestionInline(admin.TabularInline):
     model = Question
 
     def save_model(self, request, obj, form, change):
-        print("=== save answer inline " + str(obj.id))
+        # print("=== save answer inline " + str(obj.id))
         super().save_model(request, obj, form, change)
 
 
