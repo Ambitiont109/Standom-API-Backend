@@ -116,7 +116,7 @@ def list_user(request):
     """
     List users order by score
     """
-    serializer = UserSerializer(User.objects.filter(is_superuser=False).order_by('score').all(), many=True)
+    serializer = UserSerializer(User.objects.filter(is_superuser=False).order_by('-score').all(), many=True)
     ret_val = {}
     ret_val['users'] = serializer.data
     ret_val['res'] = True
