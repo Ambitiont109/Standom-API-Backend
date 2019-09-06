@@ -57,6 +57,15 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = ('name', 'avatar')
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not data['avatar']:
+            data['avatar'] = ""
+        else:
+            data['avatar'] = data['avatar'][1:]
+        return data
+
+
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
