@@ -61,23 +61,39 @@ class User(AbstractUser):
         return dist < 10
 
     def get_campaign_in_location(self):
-        # find the campaign that are available in your location, even there is many campaing, it returns only one.
+        """
+        find the campaign that are available in your location,
+        even there is many campaing, it returns only one.
+        """
         campaigns = Campaign.objects.all()
         for campaign in campaigns:
             lat = campaign.latitude
             lng = campaign.longitude
             dist = calculateDistance(lat, lng, self.latitude, self.longitude)
             # print(dist)
-            if dist < 10:   # if the distance is in 10 km
+            if dist < campaign.radius:   # if the distance is in 10 km
                 return campaign
         return None
 
 
+class AvailabeAnswer(models.Model):
+    answer = models.CharField(max_length=250)
+    question_parent = models.ForeignKey('Question', on_delete=models.CASCADE)
+
 
 class Question(models.Model):
+    RadioType = "Radio"
+    CheckBoxType = "CheckBox"
+    NormalType = "Normal"
+    Question_Type_Choices = [
+        (NormalType, 'Normal'),
+        (RadioType, 'Radio'),
+        (CheckBoxType, 'CheckBox'),
+    ]
     question = models.CharField(max_length=250)
-    # answer = models.CharField(max_length=250)  # represent the correct answer of question
+    # answer = models.CharField(max_length=250)  # represent the correct answer of question    
     campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE)
+    question_type = models.CharField(max_length=10, choices=Question_Type_Choices, default=NormalType)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -107,7 +123,6 @@ class Answer(models.Model):
         return "Answer" + str(self.id)
 
 
-
 class Config(models.Model):
     key = models.CharField(unique=True, max_length=250)
     value = models.CharField(max_length=250)
@@ -119,6 +134,8 @@ class Campaign(models.Model):
     name = models.CharField(max_length=250)
     latitude = models.FloatField(blank=True, default=0)
     longitude = models.FloatField(blank=True, default=0)
+    radius = models.FloatField(default=10)  # default value is 10km
 
     def __str__(self):
         return self.name
+

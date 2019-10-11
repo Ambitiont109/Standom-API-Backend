@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib import messages
-from .models import User, Question, Answer, Campaign
+from .models import User, Question, Answer, Campaign, AvailabeAnswer
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.admin.options import IS_POPUP_VAR
 from django.contrib.admin.utils import unquote
@@ -18,6 +18,7 @@ from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils.translation import gettext, gettext_lazy as _
 import json
+import nested_admin
 sensitive_post_parameters_m = method_decorator(sensitive_post_parameters())
 
 
@@ -176,22 +177,34 @@ class UserMyAdmin(admin.ModelAdmin):
         )
 
 
-class QuestionInline(admin.TabularInline):
+class AvailabeAnswerInline(nested_admin.NestedTabularInline):
+    model = AvailabeAnswer
+    extra = 1
+
+
+class QuestionInline(nested_admin.NestedStackedInline):
     model = Question
+    inlines = [AvailabeAnswerInline]
+    extra = 1
+    # def save_model(self, request, obj, form, change):
+    #     # print("=== save answer inline " + str(obj.id))
+    #     super().save_model(request, obj, form, change)
 
-    def save_model(self, request, obj, form, change):
-        # print("=== save answer inline " + str(obj.id))
-        super().save_model(request, obj, form, change)
 
-
-class CampaignAdmin(admin.ModelAdmin):
+class CampaignAdmin(nested_admin.NestedModelAdmin):
     inlines = [
         QuestionInline,
     ]
 
 
+class QuestionAdmin(nested_admin.NestedModelAdmin):
+    inlines = [
+        AvailabeAnswerInline,
+    ]
+
+
 my_admin_site.register(User, UserMyAdmin)
-my_admin_site.register(Question)
+my_admin_site.register(Question, QuestionAdmin)
 my_admin_site.register(Campaign, CampaignAdmin)
 # admin.site.register(Answer)
 # my_admin_site.unregister(Group)

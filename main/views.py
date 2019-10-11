@@ -75,7 +75,7 @@ def list_question(request):
         ret_val['res'] = True
     else:
         ret_val['res'] = False
-        ret_val['error'] = 'The user is not in 10km radius'
+        ret_val['error'] = 'The user is out of range'
     return Response(ret_val, status=status.HTTP_200_OK)
 
 

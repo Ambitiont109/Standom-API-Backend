@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['192.168.208.42']
 # Application definition
 
 INSTALLED_APPS = [
+    'nested_admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

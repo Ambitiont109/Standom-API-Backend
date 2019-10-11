@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Question
+from .models import User, Question, AvailabeAnswer
 
 
 class LoginSerializer(serializers.Serializer):
@@ -66,8 +66,14 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return data
 
 
+class AvailabeAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailabeAnswer
+        fields = '__all__'
+
 
 class QuestionSerializer(serializers.ModelSerializer):
+    answers = AvailabeAnswerSerializer(many=True, read_only=True, source='availabeanswer_set')
     class Meta:
         model = Question
         fields = '__all__'
