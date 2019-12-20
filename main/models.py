@@ -78,7 +78,7 @@ class User(AbstractUser):
 
 class AvailabeAnswer(models.Model):
     answer = models.CharField(max_length=250)
-    question_parent = models.ForeignKey('Question', on_delete=models.CASCADE)
+    question_parent = models.ForeignKey('Question', related_name='available_answers', on_delete=models.CASCADE)
 
 
 class Question(models.Model):
@@ -91,8 +91,8 @@ class Question(models.Model):
         (CheckBoxType, 'CheckBox'),
     ]
     question = models.CharField(max_length=250)
-    # answer = models.CharField(max_length=250)  # represent the correct answer of question    
-    campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE)
+    # answer = models.CharField(max_length=250)  # represent the correct answer of question
+    campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE, related_name='questions')
     question_type = models.CharField(max_length=10, choices=Question_Type_Choices, default=NormalType)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

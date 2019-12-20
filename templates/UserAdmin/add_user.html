@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+{% block title %} Standom Admin{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+	<li><a href="{% url 'UserAdmin:list_user' %}">User</a></li>
+	<li class="active"><span>Add User</span></li>
+</ol>
+{% endblock %}
+{% block content_title%} Add User {% endblock %}
+{% block content %}
+
+<div class="form-wrap">
+	<form class="form-horizontal" action="" method="post">
+		{% csrf_token %}
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="username">PhoneNumber*</label>
+			{% if form.phone_number.errors %}
+			<div class="col-sm-9 has-error">
+			{% else %}
+			<div class="col-sm-9">
+			{% endif %}
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					{{ form.phone_number|add_class:"form-control"|attr:"id:phone_number"|attr:"placeholder:phonenumber"|attr:"required"}}
+				</div>
+				{% if form.phone_number.errors %}
+				<div class="help-block with-errors"><ul class="list-unstyled"><li>{{form.phone_number.errors}}</li></ul></div>
+				
+				{% endif%}
+				
+			</div>
+		</div>
+		
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="password">Password*</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-lock"></i></div>
+					{{ form.password|add_class:"form-control"|attr:"id:password"|attr:"placeholder:Enter pwd"|attr:"required"|attr:"type:password"}}
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="repassword">Re Password*</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-lock"></i></div>
+					<input class="form-control" id="repassword" type="password" placeholder="Re Enter PWD" required>
+				</div>
+				<div class="help-block with-errors" id="dismatch_error" style="display: none"><ul class="list-unstyled"><li>Password does not match</li></ul></div>
+			</div>
+		</div>
+
+		<div class="form-group mb-0">
+			<div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-success mr-10" type="submit">Submit</button>
+				<button class="btn btn-default" type="submit">Cancel</button>
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock %}
+{% block extra_script %}
+<script type="text/javascript">
+
+	$('form').submit(function(event){
+		var password = $('#password').val();
+		var re_password = $('#repassword').val();
+		if(password != re_password){
+			$('#dismatch_error').css('display','block');
+			$('#repassword').parent().parent().addClass('has-error');
+			$('#password').parent().parent().addClass('has-error');
+			event.preventDefault()
+			return false;
+		}
+		return true;
+	});
+
+</script>
+{% endblock %}

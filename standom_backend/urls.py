@@ -18,9 +18,11 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
-    path('_nested_admin/', include('nested_admin.urls')),
-    path('admin/', admin.my_admin_site.urls),
+    # path('_nested_admin/', include('nested_admin.urls')),
+    # path('admin/', admin.my_admin_site.urls),
     path('', include('main.urls')),
+    path('campaign/', include('campaign.urls')),
+    path('question/', include('question.urls')),
     path('api-auth/', include('rest_framework.urls'))
 
 ]

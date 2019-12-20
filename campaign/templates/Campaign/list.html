@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Admin{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+	<li class="active"><span>Campaign</span></li>
+</ol>
+{% endblock %}
+{% block content_title%} List User {% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-sm-12">
+		<div class="panel panel-default card-view">
+			<div class="panel-heading">
+				<div class="pull-left">
+					<h6 class="panel-title txt-dark">data Table</h6>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="panel-wrapper collapse in">
+				<div class="panel-body">
+					<div class="table-wrap">
+						<div class="table-responsive">
+							<table id="datable_1" class="table table-hover display  pb-30" >
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Name</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+		
+									{% for campaign in campaigns %}
+									<tr>
+										<td> {{forloop.counter}} </td>
+										<td> {{campaign.name}} </td>
+										<td class="text-nowrap">
+											<a class="mr-25" href="{% url 'campaign:detail_campaign' campaign.id %}" > <i class="fa fa-book text-inverse m-r-10"></i></a>
+											<a class="mr-25" href="{% url 'campaign:update_campaign' campaign.id %}" > <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+											<a href="javascript:delete_campaign({{campaign.id}});" > <i class="fa fa-close text-danger"></i> </a> </td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<form method="POST" action="">
+	{% csrf_token %}
+</form>
+{% endblock %}
+{% block extra_script %}
+<script type="text/javascript">
+	function delete_campaign(id){
+		console.log(id)
+		let url_tmplate = "{% url 'campaign:delete_campaign' 0 %}";
+		url_tmplate = url_tmplate.slice(0,-1);
+		$('form').attr('action',url_tmplate+id);
+		$('form').submit()
+	}
+</script>
+{% endblock %}

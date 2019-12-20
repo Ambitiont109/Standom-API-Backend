@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+{% block title %} Admin {% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+	<li><a href="{% url 'campaign:list_campaign' %}">Campaign</a></li>
+	<li class="active"><span>Campaign Detail</span></li>
+</ol>
+{% endblock %}
+{% block content_title%} Campaign Detail {% endblock %}
+{% block content %}
+<div class="panel panel-default card-view form-wrap">
+	<form class="form-horizontal" action="" method="post">
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="name">Name</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					<input type="text" name="name" value="{{campaign.name}}" disabled maxlength="250" required="" placeholder="Input Campaign Name" id="name" class="form-control">
+				</div>
+				
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="latitude">Latitude</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					<input type="number" disabled name="latitude" value="{{campaign.latitude}}" class="form-control">
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="longitude">Longitude</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					<input type="number" disabled name="latitude" value="{{campaign.longitude}}" class="form-control">
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="radius">Radius</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					<input type="number" disabled name="latitude" value="{{campaign.radius}}" class="form-control">
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+{% include "question/list_question.html" with questions=campaign.questions.all campaign_pk=campaign.id %}
+{% endblock %}
+{% block extra_script %}
+<script type="text/javascript">
+
+</script>
+{% endblock %}

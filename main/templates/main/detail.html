@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+{% block title %} Admin {% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+	<li><a href="{% url 'main:list_user' %}">User</a></li>
+	<li class="active"><span>User Detail</span></li>
+</ol>
+{% endblock %}
+{% block content_title%} User Detail {% endblock %}
+{% block content %}
+<div class="panel panel-default card-view form-wrap">	
+	<div class="form-horizontal">
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="name">Name</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					<input type="text" name="name" value="{{user.name}}" disabled maxlength="250" required="" placeholder="Input Campaign Name" id="name" class="form-control">
+				</div>
+				
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="latitude">Email</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					<input type="text" disabled name="latitude" value="{{user.email}}" class="form-control">
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="radius">Score</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					<input type="number" disabled name="latitude" value="{{user.score}}" class="form-control">
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="longitude">Avatar</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					{% if user.avatar %}
+						<img src="{{user.avatar.url}}" style="max-width: 150px;">
+					{% else %}
+						<img src="{% static '/img/default_avatar.png' %}" style="max-width: 150px;">
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-12">
+		<div class="panel panel-default card-view">
+			<div class="panel-heading">
+				<div class="pull-left">
+					<h6 class="panel-title txt-dark">Answered Question</h6>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="panel-wrapper collapse in">
+				<div class="panel-body">
+					<div class="table-wrap">
+						<div class="table-responsive">
+							<table id="datable_1" class="table table-hover display  pb-30" >
+								<thead>
+									<tr >
+										<th>#</th>
+										<th>Question</th>
+										<th>Question Type</th>
+										<th> Answer </th>
+									</tr>
+								</thead>
+								<tbody>
+		
+									{% for answer in answers %}
+									<tr style="cursor: pointer;" class="clickable-row" data-href="{% url 'main:detail_answer' answer.id %}">
+										<td> {{forloop.counter}} </td>
+										<td> {{answer.question.question}} </td>
+										<td> {{answer.question.question_type}} </td>
+										<td> {{answer.answer}} </td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block extra_script %}
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+});
+</script>
+{% endblock %}

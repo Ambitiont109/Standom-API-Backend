@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+{% block title %} Admin {% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+	<li><a href="{% url 'campaign:list_campaign' %}">Campaign</a></li>
+
+	{% if questionForm.instance.pk is not None %}
+	<li><a href="{% url 'campaign:detail_campaign' questionForm.instance.campaign.id %}">Campaign Detail</a></li>
+	<li class="active"><span>Update Question</span></li>
+	{% else %}
+	<li><a href="{% url 'campaign:detail_campaign' campaign_pk %}">Campaign Detail</a></li>
+	<li class="active"><span>Create Question</span></li>
+	{% endif %}
+	
+</ol>
+{% endblock %}
+{% block content_title%} 	
+	{% if questionForm.instance.pk is not None %}
+	Update Question
+	{% else %}
+	Create Question
+	{% endif %} 
+{% endblock %}
+{% block content %}
+
+<div class="panel panel-default card-view form-wrap">
+	<form class="form-horizontal" action="" method="post">
+		{% csrf_token %}
+		{{ questionForm.erros.as_ul}}
+
+		{% for field in questionForm %}
+		
+			<div class="form-group">
+				<label class="col-sm-3 control-label" for="{{field.id_for_label}}">{{ field.label|capfirst }}</label>
+				<div class="col-sm-8">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="icon-user"></i></div>
+						{% if field.name == 'campaign' and questionForm.instance.pk is None %}
+							{{ field|add_class:"form-control"|attr:"disabled"}}
+						{% else %}
+							{{ field|add_class:"form-control"}}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+        {% endfor %}
+<!-- 		<div class="form-group">
+			<label class="col-sm-3 control-label" for="latitude">Latitude</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					{{ form.latitude|add_class:"form-control"|attr:"id:latitude"|attr:"required"}}
+				</div>
+			</div>
+		</div> -->
+		<div class="row" style="height: 30px;position: relative; background-color: #5c5c5d; text-align: center; margin-bottom: 10px;">
+			<h4 style="color: #fff"> Answers</h4>
+			<p style="color: #fff; position: absolute; right: 50px; top: 0px;"> Delete?</p>
+		</div>
+	    {{ formset.management_form }}
+
+    	   {% for form in formset %}
+    	   {{form.errors.as_ul}}
+				<div class="form-group formset" style="position: relative;">
+					<div class="col-sm-2">
+						
+					</div>
+					<div class="col-sm-8">
+						{{ form.answer|add_class:"form-control"}}
+						
+						<div class="help-block with-errors" style="color: #ea6c41">
+							{{form.answer.errors.as_ul}}
+						</div>
+					</div>
+					<div style="color: #fff; position: absolute; right: 50px; top: 10px;">
+					 	{% if formset.can_delete %}
+					 	{% if form.instance.pk is not None %}
+					 		<div class="checkbox checkbox-default">
+					 			{{ form.DELETE}}
+								<label for="{{form.DELETE.id_for_label}}"></label>
+							</div>	
+						{% else %}
+							<span class="btn-default btn-rounded btn-sm remove-form-row" style="cursor: pointer;"><i class="fa fa-minus-circle"></i></span>
+						{% endif %}
+					 	{% endif %}
+					</div>
+	        		{% for field in form.hidden_fields  %}
+        				{{field}}
+		        	{% endfor %}
+				</div>
+
+
+		    {% endfor %}
+		    <div id="empty_form" style="display: none">
+				<div class="form-group formset" style="position: relative;">
+						<div class="col-sm-2">
+							
+						</div>
+						<div class="col-sm-8">
+							{{ formset.empty_form.answer|add_class:"form-control"}}
+						</div>
+						<div style="color: #fff; position: absolute; right: 50px; top: 0px;">
+						 	{% if formset.can_delete %}
+								<span class="btn-default btn-rounded btn-sm remove-form-row" style="cursor: pointer;"><i class="fa fa-minus-circle"></i></span>
+						 	{% endif %}
+						</div>
+		        		{% for field in formset.empty_form.hidden_fields  %}
+	        				{{field}}
+			        	{% endfor %}
+				</div>
+			</div>
+
+		    
+		<div>
+			<button class="btn btn-default btn-rounded btn-icon left-icon add-form-row" type="button">
+			 <i class="fa fa-plus-circle"></i> <span>Add more Answer</span>
+			</button>
+		</div>
+
+		<div class="form-group mb-0">
+			<div class="col-sm-offset-8 col-sm-4">
+				<button class="btn btn-success mr-10" type="submit">Submit</button>
+				<button class="btn btn-default" type="button">Cancel</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+{% endblock %}
+{% block extra_script %}
+<script type="text/javascript">
+function updateElementIndex(el, prefix, ndx) {
+    var id_regex = new RegExp('(' + prefix + '-\\d+)');
+    var replacement = prefix + '-' + ndx;
+    if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+    if (el.id) el.id = el.id.replace(id_regex, replacement);
+    if (el.name) el.name = el.name.replace(id_regex, replacement);
+}
+function cloneMore(selector, prefix) {
+    var newElement = $(selector).clone(true);
+	var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+	$(selector).before(newElement.html().replace(/__prefix__/g, total));
+	$('#id_' + prefix + '-TOTAL_FORMS').val(parseInt(total) + 1);    
+    return false;
+}
+function deleteForm(prefix, btn) {
+    var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+    if (total > 1){
+        btn.closest('.form-group.formset').remove();
+        var forms = $('.form-group.formset');
+        $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length-1);
+        for (var i=0, formCount=forms.length; i<formCount; i++) {
+            $(forms.get(i)).find(':input').each(function() {
+                updateElementIndex(this, prefix, i);
+            });
+        }
+    }
+    return false;
+}
+$(document).on('click', '.add-form-row', function(e){
+    e.preventDefault();    
+    cloneMore('#empty_form', 'availabeanswer_set');
+    return false;
+});
+$(document).on('click', '.remove-form-row', function(e){
+    e.preventDefault();
+    deleteForm('availabeanswer_set', $(this));
+    return false;
+});
+</script>
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+{% block title %} Admin {% endblock %}
+{% block extra_style %}
+    <style type="text/css">
+      #map{ width:100%; height: 500px;  margin-bottom: 10px;}
+    </style>
+{% endblock %}
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+	<li><a href="{% url 'campaign:list_campaign' %}">Campaign</a></li>
+	{% if object %}
+	<li class="active"><span>Update Campaign</span></li>
+	{% else %}
+	<li class="active"><span>Create Campaign</span></li>
+	{% endif %}
+	
+</ol>
+{% endblock %}
+{% block content_title%} 	
+	{% if object %}
+	Update Campaign
+	{% else %}
+	Create Campaign
+	{% endif %} 
+{% endblock %}
+{% block content %}
+<div class="panel panel-default card-view form-wrap">
+	<form class="form-horizontal" action="" method="post">
+		{% csrf_token %}
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="name">Name</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					{{ form.name|add_class:"form-control"|attr:"id:name"|attr:"placeholder:Input Campaign Name"|attr:"required"}}
+				</div>
+				{% if form.name.errors %}
+				<div class="help-block with-errors"><ul class="list-unstyled"><li>{{form.name.errors}}</li></ul></div>
+				
+				{% endif%}
+				
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="latitude">Latitude</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					{{ form.latitude|add_class:"form-control"|attr:"id:latitude"|attr:"required"}}
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="longitude">Longitude</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					{{ form.longitude|add_class:"form-control"|attr:"id:longitude"|attr:"required"}}
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="radius">Radius</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					{{ form.radius|add_class:"form-control"|attr:"id:radius"|attr:"required"}}
+				</div>
+			</div>
+		</div>
+		
+<div id="set-location" class="col-sm-offset-3 col-sm-9">
+      <p> Set Location <button type="button" class="btn btn-default btn-rounded" style="padding: 3px 10px;" onclick="reset_btn_click()">reset</button> </p>
+
+     <div id="map"></div>     
+</div>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+<script type="text/javascript">
+    var map; //Will contain map object.
+    var marker = false; ////Has the user plotted their location marker? 
+    var lat = {{ form.instance.latitude }};
+    var lng = {{ form.instance.longitude }};
+    function initMap() {
+        //The center location of our map.
+        if(lat == 0.0)
+            lat = 52.357971
+        if(lng == 0.0)
+            lng = -6.516758
+        var centerOfMap = new google.maps.LatLng(lat, lng);
+        //Map options.
+        var options = {
+          center: centerOfMap, //Set center.
+          zoom: 7 //The zoom value.
+        };
+     
+        //Create the map object.
+        map = new google.maps.Map(document.getElementById('map'), options);
+     
+        //Listen for any clicks on the map.
+        google.maps.event.addListener(map, 'click', function(event) {                
+            //Get the location that the user clicked.
+            var clickedLocation = event.latLng;
+            console.log(clickedLocation);
+            //If the marker hasn't been added.
+            if(marker === false){
+                //Create the marker.
+                marker = new google.maps.Marker({
+                    position: clickedLocation,
+                    map: map,
+                    draggable: true //make it draggable
+                });
+                //Listen for drag events!
+                google.maps.event.addListener(marker, 'dragend', function(event){
+                    markerLocation();
+                });
+            } else{
+                //Marker has already been added, so just change its location.
+                marker.setPosition(clickedLocation);
+            }
+            //Get the marker's location.
+            markerLocation();
+        });
+        var clickedLocation = new google.maps.LatLng(lat, lng);
+        //If the marker hasn't been added.
+        if(marker === false){
+            //Create the marker.
+            marker = new google.maps.Marker({
+                position: clickedLocation,
+                map: map,
+                draggable: true //make it draggable
+            });
+            //Listen for drag events!
+            google.maps.event.addListener(marker, 'dragend', function(event){
+                markerLocation();
+            });
+        } else{
+            //Marker has already been added, so just change its location.
+            marker.setPosition(clickedLocation);
+            
+        }
+        markerLocation();
+
+    }
+    function reset_btn_click(){
+
+        var clickedLocation = new google.maps.LatLng(lat, lng);
+        if(marker === false){
+            //Create the marker.
+            marker = new google.maps.Marker({
+                position: clickedLocation,
+                map: map,
+                draggable: true //make it draggable
+            });
+            //Listen for drag events!
+            google.maps.event.addListener(marker, 'dragend', function(event){
+                markerLocation();
+            });
+        } else{
+            //Marker has already been added, so just change its location.
+            marker.setPosition(clickedLocation);        
+        }
+        markerLocation();
+    }
+    //This function will get the marker's current location and then add the lat/long
+    //values to our textfields so that we can save the location.
+    function markerLocation(){
+        //Get location.
+        var currentLocation = marker.getPosition();
+        //Add lat and lng values to a field that we can save.
+        document.getElementById('latitude').value = currentLocation.lat(); //latitude
+        document.getElementById('longitude').value = currentLocation.lng(); //longitude
+    }
+            
+            
+    //Load the map when the page has finished loading.
+    google.maps.event.addDomListener(window, 'load', initMap);
+</script>
+		<div class="form-group mb-0">
+			<div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-success mr-10" type="submit">Submit</button>
+				<button class="btn btn-default" type="button">Cancel</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+{% endblock %}
+{% block extra_script %}
+<script type="text/javascript">
+
+</script>
+{% endblock %}

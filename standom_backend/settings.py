@@ -38,9 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',
     'rest_framework',
     'rest_framework.authtoken',
-    'main'
+    'main',
+    'question',
+    'campaign'
 ]
 
 MIDDLEWARE = [
@@ -118,6 +121,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOGIN_URL = '/admin/login'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

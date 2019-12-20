@@ -1,0 +1,67 @@
+{% load custom_template_tags %}
+
+<div class="fixed-sidebar-left">
+	<ul class="nav navbar-nav side-nav nicescroll-bar">
+		<li class="navigation-header">
+			<span>Main</span> 
+			<i class="zmdi zmdi-more"></i>
+		</li>
+
+		<li>
+			<a  class="{% navactive request 'main:list_user main:add_user' %} href="javascript:void(0);" data-toggle="collapse" data-target="#user_dr"><div class="pull-left"><i class="zmdi zmdi-account mr-20"></i><span class="right-nav-text">Users</span></div><div class="pull-right"><i class="zmdi zmdi-caret-down"></i></div><div class="clearfix"></div></a>
+			<ul id="user_dr" class="collapse collapse-level-1">
+				<li>
+					<a href="{% url 'main:list_user' %}">
+						<div class="pull-left">									
+							<i class="zmdi zmdi-accounts-list mr-20"></i>
+							<span class="right-nav-text">List Users</span>
+						</div>
+													
+						<div class="pull-right">
+							<i class="zmdi zmdi-caret-up-down"></i> <span class="label label-warning">{% getUserCount %}</span>
+						</div>
+						<div class="clearfix"></div>
+					</a>
+				</li>
+				<li>
+					<a href="{% url 'main:add_user' %}">
+						<div class="pull-left">									
+							<i class="zmdi zmdi-account-add mr-20"></i>
+							<span class="right-nav-text">Add User</span>
+						</div>
+						<div class="clearfix"></div>
+					</a>
+				</li>
+
+			</ul>
+		</li>
+		<li>
+			<a  class="{% navactive request 'campaign:list_campaign' %}" href="javascript:void(0);" data-toggle="collapse" data-target="#user_dr1"><div class="pull-left"><i class="zmdi zmdi-account mr-20"></i><span class="right-nav-text">Campaigns</span></div><div class="pull-right"><i class="zmdi zmdi-caret-down"></i></div><div class="clearfix"></div></a>
+			<ul id="user_dr1" class="collapse collapse-level-1">
+				<li>
+					<a href="{% url 'campaign:list_campaign' %}">
+						<div class="pull-left">									
+							<i class="zmdi zmdi-accounts-list mr-20"></i>
+							<span class="right-nav-text">List Campaign</span>
+						</div>
+													
+						<div class="pull-right">
+							<i class="zmdi zmdi-caret-up-down"></i> <span class="label label-warning">{% getCampaignCount %}</span>
+						</div>
+						<div class="clearfix"></div>
+					</a>
+				</li>
+				<li>
+					<a href="{% url 'campaign:create_campaign' %}">
+						<div class="pull-left">									
+							<i class="zmdi zmdi-account-add mr-20"></i>
+							<span class="right-nav-text">Add Campaign</span>
+						</div>
+						<div class="clearfix"></div>
+					</a>
+				</li>
+			</ul>
+		</li>
+		
+	</ul>
+</div>

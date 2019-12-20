@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Standom Admin{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+	<li class="active"><a href="{% url 'UserAdmin:advertise' %}">Advertise</a></li>
+</ol>
+{% endblock %}
+{% block content_title%} Advertise {% endblock %}
+{% block content %}
+<form class="form-horizontal" action="" method="post">
+		{% csrf_token %}
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="content">Content*</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					<textarea name="content" rows="10" required="" id="content" class="form-control">{{ content }}</textarea>
+				</div>
+			</div>
+		</div>
+		<div class="form-group mb-0">
+			<div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-success mr-10" type="submit">Submit</button>
+				<a href="{% url 'UserAdmin:list_user' %}"><button class="btn btn-default" type="button">Cancel</button></a>
+			</div>
+		</div>
+	</form>
+{% endblock %}

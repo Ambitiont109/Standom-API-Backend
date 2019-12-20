@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+{% block title %} Standom Admin{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+	<li><a href="{% url 'UserAdmin:list_user' %}">User</a></li>
+	<li class="active"><span>Detail</span></li>
+</ol>
+{% endblock %}
+{% block content_title%} User Detail{% endblock %}
+{% block content %}
+<div class="panel panel-default card-view form-wrap">
+	<form class="form-horizontal" action="" method="post">
+		{% csrf_token %}
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="username">Username</label>
+			{% if form.username.errors %}
+			<div class="col-sm-9 has-error">
+			{% else %}
+			<div class="col-sm-9">
+			{% endif %}
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					{{ form.username|add_class:"form-control"|attr:"id:username"|attr:"placeholder:Username"|attr:"required"}}
+				</div>
+				{% if form.username.errors %}
+				<div class="help-block with-errors"><ul class="list-unstyled"><li>{{form.username.errors}}</li></ul></div>
+				
+				{% endif%}
+				
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="first_name">First Name</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					{{ form.first_name|add_class:"form-control"|attr:"id:first_name"|attr:"placeholder:First Name"|attr:"required"}}
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="last_name">Last Name</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-user"></i></div>
+					{{ form.first_name|add_class:"form-control"|attr:"id:last_name"|attr:"placeholder:Last Name"|attr:"required"}}
+				</div>
+			</div>
+		</div>
+
+		
+
+		<div class="form-group mb-0">
+			<div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-success mr-10" type="submit">Submit</button>
+				<button class="btn btn-default" type="submit">Cancel</button>
+			</div>
+		</div>
+	</form>
+</div>
+<div class="panel panel-default card-view form-wrap">
+	<form class="form-horizontal" id="passwordForm" action="{{request.path}}/setpassword" method='POST'>
+		{% csrf_token %}
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="password">Password*</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-lock"></i></div>
+					<input class="form-control" id="password" type="password" placeholder="Enter PWD" name="password" required>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="repassword">Re Password*</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="icon-lock"></i></div>
+					<input class="form-control" id="repassword" type="password" placeholder="Re Enter PWD" required>
+				</div>
+				<div class="help-block with-errors" id="dismatch_error" style="display: none"><ul class="list-unstyled"><li>Password does not match</li></ul></div>
+			</div>
+		</div>
+		<div class="form-group mb-0">
+			<div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-success mr-10" type="submit">Submit</button>
+				<button class="btn btn-default" type="submit">Cancel</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+{% endblock %}
+{% block extra_script %}
+<script type="text/javascript">
+
+	$('#passwordForm').submit(function(event){
+		var password = $('#password').val();
+		var re_password = $('#repassword').val();
+		if(password != re_password){
+			$('#dismatch_error').css('display','block');
+			$('#repassword').parent().parent().addClass('has-error');
+			$('#password').parent().parent().addClass('has-error');
+			event.preventDefault()
+			return false;
+		}
+		return true;
+	});
+
+</script>
+{% endblock %}
