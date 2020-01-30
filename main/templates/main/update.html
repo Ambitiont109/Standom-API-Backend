@@ -62,10 +62,10 @@
 			<label class="col-sm-3 control-label" for="{{form.avatar.id_for_label}}">Avatar</label>
 			<div class="col-sm-9">
 				<div class="input-group">
-					{% if object %}
+					{% if object.avatar %}
 					<input type="file" id="{{form.avatar.id_for_label}}" name="{{form.avatar.name}}" class="dropify" data-default-file="{{object.avatar.url}}" />						
 					{% else %}
-						<input type="file" id="{{form.avatar.id_for_label}}" name="{{form.avatar.name}}" class="dropify" data-default-file="{{object.avatar.url}}" />
+						<input type="file" id="{{form.avatar.id_for_label}}" name="{{form.avatar.name}}" class="dropify" />
 
 					{% endif %}
 
