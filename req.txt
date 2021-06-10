@@ -1,4 +1,4 @@
-Django==2.2.6
+Django==2.2.24
 django-dynamic-formsets==0.0.8
 django-nested-admin==3.2.4
 django-widget-tweaks==1.4.5
